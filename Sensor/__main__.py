@@ -35,7 +35,7 @@ def get_data(sense):
 
 
 def send_data(_data):
-    res = requests.post('http://0.0.0.0:2020/climate/data', data=_data)
+    res = requests.post('http://0.0.0.0:2020/climate/data', data=_data, timeout=20)
     res.raise_for_status()
     print(res.text)
 
