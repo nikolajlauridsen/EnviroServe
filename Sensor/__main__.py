@@ -63,7 +63,8 @@ if __name__ == '__main__':
                                        text_colour=[255, 0, 0], back_colour=[200, 255, 0])
                     sense.clear()
                 else:
-                    sense.show_message("{}'C {}%".format(data['temp'], data['humid']), text_colour=[128, 0, 0])
+                    sense.show_message("{}'C {}%".format(round(data['temp']),
+                                                         round(data['humid'])), text_colour=[128, 0, 0])
             elif event.direction == DIRECTION_DOWN and event.action == ACTION_PRESSED:
                 print('Clearing LEDs')
                 sense.clear()
