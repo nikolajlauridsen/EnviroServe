@@ -1,9 +1,10 @@
 from sense_hat import SenseHat, DIRECTION_UP, DIRECTION_DOWN, DIRECTION_RIGHT, ACTION_PRESSED
 import time
+import requests
 
-RESOLUTION = 60      # How often to report in on environmental stats.
-HUMID_WARN = 60      # Humidity to warn at.
-HUMID_PAUSE = 60*30  # How long to wait after humid warning is dismissed.
+RESOLUTION = 60*5      # How often to report in on environmental stats.
+HUMID_WARN = 60        # Humidity to warn at.
+HUMID_PAUSE = 60*30   # How long to wait after humid warning is dismissed.
 
 # ------------ LED list for warning sign ------------
 # Colors
@@ -26,11 +27,17 @@ WARNING_SIGN = [
 
 
 def get_data(sense):
-    data = {"temp": round(sense.get_temperature()),
-            "humid": round(sense.get_humidity()),
-            "pressure": round(sense.get_pressure()),
+    data = {"temp": sense.get_temperature(),
+            "humid": sense.get_humidity(),
+            "pressure": sense.get_pressure(),
             "time": time.time()}
     return data
+
+
+def send_data(_data):
+    res = requests.post('http://0.0.0.0:2020/climate/data', data=_data)
+    res.raise_for_status()
+    print(res.text)
 
 
 if __name__ == '__main__':
@@ -52,7 +59,7 @@ if __name__ == '__main__':
             if event.direction == DIRECTION_UP and event.action == ACTION_PRESSED:
                 data = get_data(sense)
                 if data['humid'] > HUMID_WARN:
-                    sense.show_message('{}%! Open a window!!'.format(data['humid']),
+                    sense.show_message('{}%! Open a window!!'.format(round(data['humid'])),
                                        text_colour=[255, 0, 0], back_colour=[200, 255, 0])
                     sense.clear()
                 else:
@@ -75,14 +82,17 @@ if __name__ == '__main__':
         # Periodically check the stats TODO: send to API
         if time.time() - last_check > RESOLUTION:
             data = get_data(sense)
-            print('Checking sensors: {}\'C, {}%, Pres. {} Millibars'.format(data['temp'],
-                                                                            data['humid'],
-                                                                            data['pressure']))
+            print('Checking sensors: {}\'C, {}%, Pres. {} Millibars'.format(round(data['temp']),
+                                                                            round(data['humid']),
+                                                                            round(data['pressure'])))
+            print('Sending data')
+            send_data(data)
             if data['humid'] > HUMID_WARN and data["time"] - last_warn > HUMID_PAUSE and not night_mode:
                 print('Triggering warning')
                 sense.set_pixels(WARNING_SIGN)
                 time.sleep(0.5)
-                sense.show_message('Humidity warning {}%'.format(data['humid']), back_colour=O, text_colour=[255, 0, 0])
+                sense.show_message('Humidity warning {}%'.format(round(data['humid'])),
+                                   back_colour=O, text_colour=[255, 0, 0])
                 sense.set_pixels(WARNING_SIGN)
                 last_warn = data["time"]
             last_check = data["time"]

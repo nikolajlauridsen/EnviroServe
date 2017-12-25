@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS climate (temp REAL, humid REAL, pressure REAL, time INT)
