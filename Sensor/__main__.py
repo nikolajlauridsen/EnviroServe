@@ -3,7 +3,7 @@ import time
 
 RESOLUTION = 60      # How often to report in on environmental stats.
 HUMID_WARN = 60      # Humidity to warn at.
-HUMID_PAUSE = 60*1  # How long to wait after humid warning is dismissed.
+HUMID_PAUSE = 60*30  # How long to wait after humid warning is dismissed.
 
 # ------------ LED list for warning sign ------------
 # Colors
