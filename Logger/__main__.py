@@ -2,12 +2,12 @@ from flask import Flask, request, g, make_response, jsonify
 import sqlite3
 
 import datetime
-from io import StringIO
+from io import BytesIO
 import random
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
-from matplotlib.dates import DateFormatter
+from matplotlib.dates import DateFormatter, date2num
 
 DATABASE = 'sensordata.db'
 
@@ -114,18 +114,18 @@ def graph():
     dates = []
     humids = []
     for result in results:
-        dates.append(result['time'])
+        dates.append(datetime.datetime.fromtimestamp(result['time']))
         humids.append(result['humid'])
 
     # Graph it
     fig = Figure()
     axis = fig.add_subplot(1, 1, 1)
-    axis.plot_date(dates, humids)
-    axis.xaxis.set_major_formatter(DateFormatter('%d/%m/%Y %H:%M:%S'))
+    axis.plot_date(dates, humids, '-')
+    axis.xaxis.set_major_formatter(DateFormatter('%d/%m/%y %H:%M'))
     fig.autofmt_xdate()
     canvas = FigureCanvas(fig)
     # Save output
-    png_output = StringIO()
+    png_output = BytesIO()
     canvas.print_png(png_output)
 
     # Create the response and send it
