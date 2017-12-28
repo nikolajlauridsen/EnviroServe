@@ -62,6 +62,10 @@ def query_db(query, args=(), one=False, commit=False):
 
 @LoggerApi.route('/climate/data', methods=['GET', 'POST'])
 def data():
+    """
+    Endpoint for inserting data into the climate table or retrieving all data
+    from the climate table
+    """
     if request.method == 'POST':
         query_db('INSERT INTO climate VALUES (?, ?, ?, ?)', [request.form['temp'],
                                                              request.form['humid'],
@@ -75,6 +79,10 @@ def data():
 
 @LoggerApi.route('/climate/now', methods=['GET'])
 def now():
+    """
+    Endpoint for receiving the most recent entry in the climate table,
+    useful for displaying the current-ish temperature
+    """
     result = query_db('SELECT * FROM climate ORDER BY time DESC LIMIT 1;', one=True)
     return jsonify(result)
 
