@@ -73,6 +73,12 @@ def data():
         return jsonify(results=data)
 
 
+@LoggerApi.route('/climate/now', methods=['GET'])
+def now():
+    result = query_db('SELECT * FROM climate ORDER BY time DESC LIMIT 1;', one=True)
+    return jsonify(result)
+
+
 if __name__ == '__main__':
     LoggerApi.run(host='0.0.0.0',
                   port=2020,
