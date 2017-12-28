@@ -6,6 +6,9 @@ RESOLUTION = 60*5      # How often to report in on environmental stats.
 HUMID_WARN = 60        # Humidity to warn at.
 HUMID_PAUSE = 60*30   # How long to wait after humid warning is dismissed.
 
+LOGGER_IP = "0.0.0.0"
+LOGGER_PORT = "2020"
+
 # ------------ LED list for warning sign ------------
 # Colors
 X = [255, 0, 0]    # Red
@@ -35,17 +38,26 @@ def get_data(sense):
 
 
 def send_data(_data):
-    res = requests.post('http://0.0.0.0:2020/climate/data', data=_data, timeout=20)
+    res = requests.post('http://{}:{}/climate/data'.format(LOGGER_IP,
+                                                           LOGGER_PORT),
+                        data=_data, timeout=20)
+
     res.raise_for_status()
     print(res.text)
 
-
-if __name__ == '__main__':
-    print('Setting up Sense HAT')
+def init_sense():
+    """
+    Initialize the sense hat
+    """
     sense = SenseHat()
     sense.clear()
     sense.set_rotation(180)  # I'm using my sense hat upside down
     sense.low_light = True   # This thing is very, very bright
+    return sense
+
+if __name__ == '__main__':
+    print('Setting up Sense HAT')
+    sense = init_sense()
     print('Starting main loop.')
 
     last_check = 0
@@ -80,7 +92,7 @@ if __name__ == '__main__':
                     night_mode = True
                     sense.clear()
 
-        # Periodically check the stats TODO: send to API
+        # Periodically check the stats
         if time.time() - last_check > RESOLUTION:
             data = get_data(sense)
             print('Checking sensors: {}\'C, {}%, Pres. {} Millibars'.format(round(data['temp']),
