@@ -45,6 +45,7 @@ def send_data(_data):
     res.raise_for_status()
     print(res.text)
 
+
 def init_sense():
     """
     Initialize the sense hat
@@ -54,6 +55,7 @@ def init_sense():
     sense.set_rotation(180)  # I'm using my sense hat upside down
     sense.low_light = True   # This thing is very, very bright
     return sense
+
 
 if __name__ == '__main__':
     print('Setting up Sense HAT')
