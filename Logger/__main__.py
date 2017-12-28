@@ -1,6 +1,14 @@
 from flask import Flask, request, g, make_response, jsonify
 import sqlite3
 
+import datetime
+from io import StringIO
+import random
+
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+from matplotlib.dates import DateFormatter
+
 DATABASE = 'sensordata.db'
 
 
@@ -85,6 +93,45 @@ def now():
     """
     result = query_db('SELECT * FROM climate ORDER BY time DESC LIMIT 1;', one=True)
     return jsonify(result)
+
+
+@LoggerApi.route('/climate/graph')
+def graph():
+    start_time = request.form.get('start_time')
+    end_time = request.form.get('end_time')
+
+    # Fetch data from database
+    if start_time and end_time:
+        results = query_db('SELECT * FROM climate WHERE ? < time < ?', [start_time, end_time])
+    elif start_time and not end_time:
+        results = query_db('SELECT * FROM climate WHERE time > ?', [start_time])
+    elif end_time and not start_time:
+        results = query_db('SELECT * FROM climate WHERE time < ?', [end_time])
+    else:
+        results = query_db('SELECT * FROM climate')
+
+    # Turn it in to lists which can be graphed
+    dates = []
+    humids = []
+    for result in results:
+        dates.append(result['time'])
+        humids.append(result['humid'])
+
+    # Graph it
+    fig = Figure()
+    axis = fig.add_subplot(1, 1, 1)
+    axis.plot_date(dates, humids)
+    axis.xaxis.set_major_formatter(DateFormatter('%d/%m/%Y %H:%M:%S'))
+    fig.autofmt_xdate()
+    canvas = FigureCanvas(fig)
+    # Save output
+    png_output = StringIO()
+    canvas.print_png(png_output)
+
+    # Create the response and send it
+    response = make_response(png_output.getvalue())
+    response.headers['Content-Type'] = 'image/png'
+    return response
 
 
 if __name__ == '__main__':
