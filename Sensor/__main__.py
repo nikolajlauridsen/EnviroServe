@@ -1,6 +1,7 @@
 from sense_hat import SenseHat, DIRECTION_UP, DIRECTION_DOWN, DIRECTION_RIGHT, ACTION_PRESSED
 import time
 import requests
+from requests import ConnectionError
 
 RESOLUTION = 60*5      # How often to report in on environmental stats.
 HUMID_WARN = 60        # Humidity to warn at.
@@ -38,12 +39,15 @@ def get_data(sense):
 
 
 def send_data(_data):
-    res = requests.post('http://{}:{}/climate/data'.format(LOGGER_IP,
-                                                           LOGGER_PORT),
-                        data=_data, timeout=20)
+    try:
+        res = requests.post('http://{}:{}/climate/data'.format(LOGGER_IP,
+                                                               LOGGER_PORT),
+                            data=_data, timeout=20)
 
-    res.raise_for_status()
-    print(res.text)
+        res.raise_for_status()
+        print(res.text)
+    except ConnectionError:
+        print('Couldn\'t connect to server, skipping reporting to API...')
 
 
 def init_sense():
