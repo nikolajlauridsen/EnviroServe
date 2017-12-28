@@ -3,13 +3,18 @@ import sqlite3
 
 import datetime
 from io import BytesIO
-import random
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
-from matplotlib.dates import DateFormatter, date2num
+from matplotlib.dates import DateFormatter
 
 DATABASE = 'sensordata.db'
+
+COLORS = {
+    'red': (1, 0.012, 0.243),
+    'green': (0, 0.502, 0),
+    'blue': (0, 0.498, 1)
+}
 
 
 LoggerApi = Flask(__name__)
@@ -113,16 +118,31 @@ def graph():
     # Turn it in to lists which can be graphed
     dates = []
     humids = []
+    temps = []
+    pressures = []
     for result in results:
         dates.append(datetime.datetime.fromtimestamp(result['time']))
         humids.append(result['humid'])
+        temps.append(result['temp'])
+        pressures.append(result['pressure'])
 
     # Graph it
     fig = Figure()
+    # First y axis (temp and humid)
     axis = fig.add_subplot(1, 1, 1)
-    axis.plot_date(dates, humids, '-')
+    axis.plot_date(dates, humids, '-', color=COLORS['blue'])
+    axis.plot_date(dates, temps, '-', color=COLORS['red'])
     axis.xaxis.set_major_formatter(DateFormatter('%d/%m/%y %H:%M'))
+    axis.set_ylabel('Humidity in % & Temps in C')
+    # Second y axis (pressure)
+    axis_pressure = axis.twinx()
+    axis_pressure.plot_date(dates, pressures, '-', color=COLORS['green'])
+    axis_pressure.xaxis.set_major_formatter(DateFormatter('%d/%m/%y %H:%M'))
+    axis_pressure.set_ylabel('Pressure in millibar')
+    # Configure the figure
     fig.autofmt_xdate()
+    fig.legend(['Humidity', 'Temperature', 'Pressure'], loc='lower right')
+    fig.tight_layout()
     canvas = FigureCanvas(fig)
     # Save output
     png_output = BytesIO()
