@@ -130,12 +130,15 @@ def graph():
     fig = Figure()
     # First y axis (temp and humid)
     axis = fig.add_subplot(1, 1, 1)
+    # Plot humidity and temp on the same scale
     axis.plot_date(dates, humids, '-', color=COLORS['blue'])
     axis.plot_date(dates, temps, '-', color=COLORS['red'])
     axis.xaxis.set_major_formatter(DateFormatter('%d/%m/%y %H:%M'))
     axis.set_ylabel('Humidity in % & Temps in C')
+    axis.set_xlabel('Time')
     # Second y axis (pressure)
     axis_pressure = axis.twinx()
+    # Plot pressure
     axis_pressure.plot_date(dates, pressures, '-', color=COLORS['green'])
     axis_pressure.xaxis.set_major_formatter(DateFormatter('%d/%m/%y %H:%M'))
     axis_pressure.set_ylabel('Pressure in millibar')
