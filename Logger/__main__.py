@@ -1,33 +1,35 @@
 from flask import Flask, request, g, make_response, jsonify
-import sqlite3
-
-import datetime
 from io import BytesIO
+import sqlite3
+import datetime
+
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from matplotlib.dates import DateFormatter
 
 DATABASE = 'sensordata.db'
-
-COLORS = {
+COLORS = {  # For plotting with matplot
     'red': (1, 0.012, 0.243),
     'green': (0, 0.502, 0),
     'blue': (0, 0.498, 1)
 }
 
-
 LoggerApi = Flask(__name__)
 
 
 def make_dicts(cursor, row):
-    """Converts database queries to dictionaries"""
+    """
+    Converts database queries to dictionaries
+    """
     return dict((cursor.description[idx][0], value)
                 for idx, value in enumerate(row))
 
 
 def get_db():
-    """Opens database connection and returns database object"""
+    """
+    Opens database connection and returns database object
+    """
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
@@ -36,7 +38,9 @@ def get_db():
 
 
 def init_db():
-    """Initializes the database, creating all tables"""
+    """
+    Initializes the database, creating all tables
+    """
     with LoggerApi.app_context():
         db = get_db()
         with LoggerApi.open_resource('schema.sql', mode='r') as f:
@@ -46,15 +50,19 @@ def init_db():
 
 @LoggerApi.teardown_appcontext
 def close_connection(exception):
-    """Closes database connection"""
+    """
+    Closes database connection
+    """
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
 
 
 def query_db(query, args=(), one=False, commit=False):
-    """Query the database, if commit is False the function will fetch data
-    if commit is true it'll insert data"""
+    """
+    Query the database, if commit is False the function will fetch data
+    if commit is true it'll insert data
+    """
     db = get_db()
 
     try:
@@ -102,6 +110,14 @@ def now():
 
 @LoggerApi.route('/climate/graph')
 def graph():
+    """
+    Endpoint for generating a graph from the database
+    Takes to optional form arguments
+    start_time: UNIX timestamp
+                earliest data point to retrieve
+    end time: UNIX timestamp
+              latest data point to retrieve
+    """
     start_time = request.form.get('start_time')
     end_time = request.form.get('end_time')
 
