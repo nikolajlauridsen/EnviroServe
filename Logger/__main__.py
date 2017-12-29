@@ -142,7 +142,7 @@ def graph():
     # Configure the figure
     fig.autofmt_xdate()
     fig.legend(['Humidity', 'Temperature', 'Pressure'], loc='lower right')
-    fig.tight_layout()
+    fig.set_tight_layout(True)
     canvas = FigureCanvas(fig)
     # Save output
     png_output = BytesIO()
