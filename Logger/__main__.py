@@ -181,11 +181,11 @@ def index():
     result = query_db('SELECT * FROM climate ORDER BY time DESC LIMIT 1;',
                       one=True)
     try:
-        context = {'temp': result['temp'],
-                   'humid': result['humid'],
-                   'pressure': result['pressure'],
+        context = {'temp': round(result['temp'], 1),
+                   'humid': round(result['humid'], 1),
+                   'pressure': round(result['pressure']),
                    'time': datetime.datetime.fromtimestamp(int(result['time'])
-                                                           ).strftime('%d-%m-%Y %H:%M:')}
+                                                           ).strftime('%d-%m-%y %H:%M')}
     except TypeError:
         context = {'temp': None,
                    'humid': None,
