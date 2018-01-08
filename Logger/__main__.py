@@ -191,7 +191,7 @@ def index():
                    'humid': None,
                    'pressure': None,
                    'time': None}
-    return render_template('index.html', data=context)
+    return render_template('index.html', **context)
 
 
 if __name__ == '__main__':
