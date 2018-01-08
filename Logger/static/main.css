@@ -1,0 +1,9 @@
+.card{
+    float: left;
+    min-width: 200px;
+}
+
+.card-content{
+    text-align: center;
+    font-weight: bold;
+}

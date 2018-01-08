@@ -3,9 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <title>Weather station</title>
+    <!--   Imports   -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 </head>
 
 <body>
-    <h1>Sense hat weatherstation</h1>
+    <div class="container">
+        <!--  Title row  -->
+        <div class="row">
+            <h1 align="center">Sense hat weatherstation</h1>
+        </div>
+
+        <!-- Current temp row  -->
+        {% if humid and temp and pressure %}
+        <div class="row">
+            <div class="col l4 m4 s6">
+                <div class="card red">
+                    <div class="card-content">
+                        <p>Temperature</p>
+                        <p>{{ temp }}C</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l4 m4 s6">
+                <div class="card blue">
+                    <div class="card-content">
+                        <p>Humidity</p>
+                        <p>{{ humid }}%</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l4 m4 s6">
+                <div class="card green">
+                    <div class="card-content">
+                        <p>Pressure</p>
+                        <p>{{ pressure }} Millibar</p>
+                    </div>
+                </div>
+            </div>
+        <p>Data from: {{ time }}</p>
+        </div>
+        {% else %}
+        <p>No data to show...</p>
+        {% endif %}
+    </div>
 </body>
 </html>
