@@ -1,4 +1,4 @@
-from flask import Flask, request, g, make_response, jsonify
+from flask import Flask, request, g, make_response, jsonify, render_template
 from io import BytesIO
 import sqlite3
 import datetime
@@ -171,6 +171,27 @@ def graph():
     response = make_response(png_output.getvalue())
     response.headers['Content-Type'] = 'image/png'
     return response
+
+
+@LoggerApi.route('/index')
+def index():
+    """
+    Index page displaying last data set and graph
+    """
+    result = query_db('SELECT * FROM climate ORDER BY time DESC LIMIT 1;',
+                      one=True)
+    try:
+        context = {'temp': result['temp'],
+                   'humid': result['humid'],
+                   'pressure': result['pressure'],
+                   'time': datetime.datetime.fromtimestamp(int(result['time'])
+                                                           ).strftime('%d-%m-%Y %H:%M:')}
+    except TypeError:
+        context = {'temp': None,
+                   'humid': None,
+                   'pressure': None,
+                   'time': None}
+    return render_template('index.html', data=context)
 
 
 if __name__ == '__main__':
