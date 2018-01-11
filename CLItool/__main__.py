@@ -4,6 +4,8 @@ import json
 import sys
 import datetime
 import argparse
+from PIL import Image
+import time
 
 
 def convert_unix(unix_stamp, _format):
@@ -32,8 +34,8 @@ def get_newest_data():
 
 def get_graph(start):
     try:
-        res = requests.get('http://{}:{}/graph'.format(API_IP, API_PORT),
-                           timeout=10, data={'start_time': start})
+        res = requests.get('http://{}:{}/climate/graph'.format(API_IP, API_PORT),
+                           timeout=10, data={'start_time': start}, stream=True)
         res.raise_for_status()
     except InvalidURL:
         sys.exit('Invalid URL, most likely a problem with the API_IP or '
@@ -41,7 +43,9 @@ def get_graph(start):
     except Exception as e:
         print('Something went wrong when connecting to API...')
         raise e
-    # TODO: return as object suited for tkinter
+
+    image_file = Image.open(res.raw)
+    return image_file
 
 
 API_IP = "192.168.1.250"
@@ -54,8 +58,18 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.days or args.hours:
-        # TODO: Get graph from API and display it with tkinter
-        pass
+        if args.hours and not args.days:
+            print('Fetching graph for the last {} hours'.format(args.hours))
+            start_time = time.time() - (args.hours * 3600)
+        elif args.days and not args.hours:
+            print('Fetching graph for the last {} days'.format(args.days))
+            start_time = time.time() - (args.days * 24 * 3600)
+        else:
+            print('Fetching graph for the last {} days and {} hours'
+                  ''.format(args.days, args.hours))
+            start_time = time.time() - (args.days*24*3600 + args.hours*3600)
+        image = get_graph(start_time)
+        image.show()
     else:
         print('Requesting data from API...')
         data = get_newest_data()
