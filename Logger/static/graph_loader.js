@@ -4,5 +4,4 @@ function load_graph(hr){
 
     var image_holder = document.getElementById("graph");
     image_holder.src = 'http://127.0.0.1:2020/climate/graph?start_time=' + start_time;
-    alert('Image source set try 8')
 }
