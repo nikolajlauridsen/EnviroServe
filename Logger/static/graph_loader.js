@@ -3,5 +3,5 @@ function load_graph(hr){
     var start_time = now - (hr*3600);
 
     var image_holder = document.getElementById("graph");
-    image_holder.src = 'http://127.0.0.1:2020/climate/graph?start_time=' + start_time;
+    image_holder.src = 'http://192.168.1.250:2020/climate/graph?start_time=' + start_time;
 }
