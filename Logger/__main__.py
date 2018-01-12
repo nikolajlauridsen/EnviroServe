@@ -118,8 +118,13 @@ def graph():
     end time: UNIX timestamp
               latest data point to retrieve
     """
+    # Try to get params from form data first, then try url params
     start_time = request.form.get('start_time')
     end_time = request.form.get('end_time')
+    if not start_time:
+        start_time = request.args.get('start_time')
+    if not end_time:
+        end_time = request.args.get('end_time')
 
     # Fetch data from database
     if start_time and end_time:
