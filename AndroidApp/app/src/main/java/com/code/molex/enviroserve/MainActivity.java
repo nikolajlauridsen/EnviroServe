@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Prepare for sending request
         RequestQueue queue = Volley.newRequestQueue(this);
+        // TODO: Don't hardcode the URL
         String url = "http://192.168.1.250:2020/climate/now";
 
         JsonObjectRequest dataRequest = new JsonObjectRequest

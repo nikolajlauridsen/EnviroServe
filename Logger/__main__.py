@@ -162,7 +162,7 @@ def graph():
     # Plot pressure
     axis_pressure.plot_date(dates, pressures, '-', color=COLORS['green'])
     axis_pressure.xaxis.set_major_formatter(DateFormatter('%d/%m/%y %H:%M'))
-    axis_pressure.set_ylabel('Pressure in millibar')
+    axis_pressure.set_ylabel('Pressure in mbar')
     # Configure the figure
     fig.autofmt_xdate()
     fig.legend(['Humidity', 'Temperature', 'Pressure'], loc='lower right')
