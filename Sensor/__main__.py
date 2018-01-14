@@ -1,7 +1,7 @@
 from sense_hat import SenseHat, DIRECTION_UP, DIRECTION_DOWN, DIRECTION_RIGHT, ACTION_PRESSED
 import time
 import requests
-from requests import ConnectionError
+from requests import ConnectionError, Timeout
 
 RESOLUTION = 60*5      # How often to report in on environmental stats.
 HUMID_WARN = 60        # Humidity to warn at.
@@ -46,6 +46,8 @@ def send_data(_data):
 
         res.raise_for_status()
         print(res.text)
+    except Timeout:
+        print('API timed out..')
     except ConnectionError:
         print('Couldn\'t connect to server, skipping reporting to API...')
 
