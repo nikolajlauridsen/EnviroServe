@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">EnviroServe</string>
+    <string name="temp_label">Temperature</string>
+    <string name="humid_label">Humidity</string>
+    <string name="pressure_label">Pressure</string>
+    <string name="temp_unit">\'C</string>
+    <string name="humid_unit">%</string>
+    <string name="pressure_unit">\Millibar</string>
+    <string name="refreshButton">Refresh</string>
+</resources>
