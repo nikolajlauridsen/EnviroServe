@@ -9,7 +9,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="110dp"
+        tools:layout_editor_absoluteY="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -21,84 +23,86 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_margin="10dp"
-                android:orientation="vertical"
-                android:background="@color/tempRed">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:text="@string/temp_label" />
+                android:layout_weight="1"
+                android:background="@color/tempRed"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/temp"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:text="@string/temp_unit"
+                    android:textAlignment="center"
                     android:textSize="14pt"
-                    android:textStyle="bold"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/temp_label"
+                    android:textAlignment="center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+
+                android:background="@color/humidBlue"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/humid"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/humid_unit"
+                    android:textAlignment="center"
+                    android:textSize="14pt"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/humid_label"
                     android:textAlignment="center" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:layout_margin="10dp"
-
-                android:orientation="vertical"
-                android:background="@color/humidBlue">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:text="@string/humid_label" />
-
-                <TextView
-                    android:id="@+id/humid"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textAlignment="center"
-                    android:textSize="14pt"
-                    android:textStyle="bold"
-                    android:text="@string/humid_unit"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:layout_margin="10dp"
-                android:orientation="vertical"
-                android:background="@color/pressureGreen">
+                android:background="@color/pressureGreen"
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:text="@string/pressure_label"/>
                 <TextView
                     android:id="@+id/pressure"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="@string/pressure_unit"
                     android:textAlignment="center"
-                    android:textSize="11pt"
-                    android:textStyle="bold"
-                    android:text="@string/pressure_unit"/>
+                    android:textSize="14pt"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/pressure_label"
+                    android:textAlignment="center" />
+
             </LinearLayout>
         </LinearLayout>
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            style="@style/Widget.AppCompat.Button.Small"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
             android:layout_marginEnd="10dp"
-            android:text="@string/refreshButton"
-            android:onClick="refreshData"
-            />
+            android:layout_marginStart="10dp"
+            android:background="@android:drawable/ic_menu_rotate"
+            android:onClick="refreshData" />
 
     </LinearLayout>
 
