@@ -2,14 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Weather station</title>
     <!--   Imports   -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
-    <!--Import materialize.css-->
+    <!-- Materialize
+    <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-    <!-- Compiled and minified JavaScript -->
+     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
+    <!--   Served  -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
     <script src="{{ url_for('static', filename='graph_loader.js') }}"></script>
+
 </head>
 
 <body>
@@ -49,15 +54,26 @@
                 </div>
             </div>
         <p>Data from: {{ time }}</p>
-        </div>
+
         {% else %}
         <p>No data to show...</p>
         {% endif %}
+        </div>
 
-    <button type="button" onclick="load_graph(12)">12 hr</button>
-    <button type="button" onclick="load_graph(24)">24 hrs</button>
-    <button type="button" onclick="load_graph(168)">7 days</button>
-    <img src="#" id="graph">
+        <!-- Graping section -->
+        <h5 id="graph title center-align">Climate graph</h5>
+        <div class="row center-align">
+            <img src="#" id="graph" >
+        </div>
+
+        <!-- Button row -->
+        <div class="row">
+            <a type="button" class="btn waves-effect waves-teal blue" onclick="load_graph(12)">12 hr</a>
+            <a type="button" class="btn waves-effect waves-teal blue" onclick="load_graph(24)">24 hrs</a>
+            <a type="button" class="btn waves-effect waves-teal blue" onclick="load_graph(168)">7 days</a>
+        </div>
+
+
     </div>
 </body>
 </html>

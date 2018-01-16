@@ -3,5 +3,21 @@ function load_graph(hr){
     var start_time = now - (hr*3600);
 
     var image_holder = document.getElementById("graph");
+    var graph_title_holder = document.getElementById("graph title");
+
+    graph_title_holder.innerText = "Graph from: " + format_unix(start_time) + " to: " + format_unix(now);
     image_holder.src = 'http://192.168.1.250:2020/climate/graph?start_time=' + start_time;
 }
+
+function format_unix(timestamp){
+    var date = new Date(timestamp * 1000);
+
+    var timestring = date.toLocaleTimeString();
+    timestring.slice(0, timestring.length-3);  // Slice seconds
+    timestring.replace(".", ":");              // Replace . with :
+
+    return timestring + " " + date.toLocaleDateString();
+}
+document.addEventListener("DOMContentLoaded", function () {
+    load_graph(12);
+});
