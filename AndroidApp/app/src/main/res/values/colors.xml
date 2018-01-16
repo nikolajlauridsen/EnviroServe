@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="black">#000000</color>
-    <color name="tempRed">#E53935</color>
-    <color name="humidBlue">#039BE5</color>
-    <color name="pressureGreen">#43A047</color>
+    <color name="tempRed">#FF2F1B</color>
+    <color name="humidBlue">#0D96F2</color>
+    <color name="pressureGreen">#0AAF53</color>
 </resources>

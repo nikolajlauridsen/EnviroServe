@@ -1,5 +1,6 @@
 package com.code.molex.enviroserve;
 
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,12 +20,22 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
-    private final String errorString = "Error";
+    private final String errorString = "Error parsing JSON";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
+
+
+    @Override
+    protected void onResume(){{
+        super.onResume();
+        refreshData(getWindow().getDecorView().getRootView());
+    }
+
     }
 
     public HashMap<String, String> formatData(JSONObject response) throws JSONException{
@@ -68,15 +79,21 @@ public class MainActivity extends AppCompatActivity {
                             // TODO: Show a dialog box
                             tempText.setText(errorString);
                         }
-
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO: Smart error things
+                        // Code here.
+                        Snackbar warningSnack = Snackbar.make(findViewById(R.id.root),
+                                R.string.connectionWarningString, Snackbar.LENGTH_LONG);
+                        warningSnack.show();
                     }
                 });
-        // Launch.
+        // Tell the user what's going on
+        Snackbar connectingSnack = Snackbar.make(findViewById(R.id.root),
+                R.string.server_connecting_message, Snackbar.LENGTH_SHORT);
+        connectingSnack.show();
+        // Send request
         queue.add(dataRequest);
     }
 }

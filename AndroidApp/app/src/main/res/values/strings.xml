@@ -8,6 +8,11 @@
     <string name="temp_unit">\'C</string>
     <string name="humid_unit">%</string>
     <string name="pressure_unit">mbar</string>
+    <string name="data_time">Data fetched: </string>
+    <string name="date_holder">Not fetched yet.</string>
 
     <string name="refreshButton">Refresh</string>
+
+    <string name="server_connecting_message">Retrieving climate data</string>
+    <string name="connectionWarningString">Connection error</string>
 </resources>
