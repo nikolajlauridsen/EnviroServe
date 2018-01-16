@@ -12,9 +12,10 @@ function load_graph(hr){
 function format_unix(timestamp){
     var date = new Date(timestamp * 1000);
 
+    // Format time string cause it's weird
     var timestring = date.toLocaleTimeString();
-    timestring.slice(0, timestring.length-3);  // Slice seconds
-    timestring.replace(".", ":");              // Replace . with :
+    timestring = timestring.slice(0, timestring.length-3);  // Slice seconds
+    timestring = timestring.replace(".", ":");              // Replace . with :
 
     return timestring + " " + date.toLocaleDateString();
 }
