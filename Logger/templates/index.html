@@ -72,11 +72,31 @@
 
         <!-- Button row -->
         <div class="row center-align">
-            <a type="button" class="btn waves-effect waves-teal blue" onclick="load_graph(12)">12 hr</a>
-            <a type="button" class="btn waves-effect waves-teal blue" onclick="load_graph(24)">24 hrs</a>
-            <a type="button" class="btn waves-effect waves-teal blue" onclick="load_graph(168)">7 days</a>
+            <a type="button" class="btn waves-effect waves-light blue" onclick="load_graph(0, 12)">12 hr</a>
+            <a type="button" class="btn waves-effect waves-light blue" onclick="load_graph(0, 24)">24 hrs</a>
+            <a type="button" class="btn waves-effect waves-light blue" onclick="load_graph(7, 0)">7 days</a>
+            <a class="btn waves-effect waves-light blue modal-trigger" href="#modal">Custom</a>
         </div>
 
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <h4>Custom Graph</h4>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="days" type="number" class="validate">
+                        <label for="days">Days</label>
+                    </div>
+                    <div class="input-field col s12">
+                        <input id="hours" type="number" class="validate">
+                        <label for="hours">Hours</label>
+                    </div>
+                </div>
+
+                <div class="row right-align">
+                    <a type="button" class="btn waves-effect waves-light blue" onclick="load_custom_graph()">Load graph</a>
+                </div>
+            </div>
+        </div>
 
     </div>
 </body>

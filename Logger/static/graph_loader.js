@@ -1,12 +1,21 @@
-function load_graph(hr){
+function load_graph(days, hours){
+    var duration = days * 24 * 3600 + hours * 3600;
     var now = Math.floor(Date.now() / 1000);
-    var start_time = now - (hr*3600);
+    var start_time = now - duration;
 
     var image_holder = document.getElementById("graph");
     var graph_title_holder = document.getElementById("graph title");
 
     graph_title_holder.innerText = "Graph from: " + format_unix(start_time) + " to: " + format_unix(now);
     image_holder.src = 'http://192.168.1.250:2020/climate/graph?start_time=' + start_time;
+}
+
+function load_custom_graph(){
+    var hours = document.getElementById("hours").value;
+    var days = document.getElementById("days").value;
+
+    load_graph(days, hours);
+    $('.modal').modal('close');
 }
 
 function format_unix(timestamp){
@@ -19,6 +28,7 @@ function format_unix(timestamp){
 
     return timestring + " " + date.toLocaleDateString();
 }
-document.addEventListener("DOMContentLoaded", function () {
-    load_graph(12);
+$(document).ready(function () {
+    $('.modal').modal();
+    load_graph(0, 12);
 });
