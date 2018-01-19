@@ -21,8 +21,12 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private final String errorString = "Error parsing JSON";
@@ -117,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
         final TextView tempText = findViewById(R.id.temp);
         final TextView humidText = findViewById(R.id.humid);
         final TextView pressureText = findViewById(R.id.pressure);
+        final TextView dateHolder = findViewById(R.id.date_holder);
 
         // Prepare for sending request
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -135,6 +140,11 @@ public class MainActivity extends AppCompatActivity {
                             tempText.setText(data.get("temp"));
                             humidText.setText(data.get("humid"));
                             pressureText.setText(data.get("pressure"));
+                            // Set data age string
+                            String dateFormat = "dd/MM/yy hh:mm";
+                            SimpleDateFormat formatter = new SimpleDateFormat(dateFormat, Locale.getDefault());
+                            Date dataAge = new Date((long) response.getDouble("time")*1000);
+                            dateHolder.setText(formatter.format(dataAge));
                         } catch (JSONException e) {
                             // TODO: Show a dialog box
                             tempText.setText(errorString);
