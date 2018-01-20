@@ -102,6 +102,28 @@ def extract_variables(expected_variables, _request):
     return extracted_variables
 
 
+def query_climate_range(**kwargs):
+    """
+    Query the climate table for all data within a certain date range
+    Is designed to work directly with extract variables where not all parameters are ensured.
+    start time and end time is therefor both optional, if none is provided, all the data
+    will be returned
+    :param kwargs: start time and end time as kwargs
+        start_time: start time as a unix time stamp
+        end_time: end time as a unix time stamp
+    :return:
+    """
+    if kwargs['start_time'] and kwargs['end_time']:
+        return query_db('SELECT * FROM climate WHERE ? < time < ?', [kwargs['start_time'],
+                                                                     kwargs['end_time']])
+    elif kwargs['start_time'] and not kwargs['end_time']:
+        return query_db('SELECT * FROM climate WHERE time > ?', [kwargs['start_time']])
+    elif kwargs['end_time'] and not kwargs['start_time']:
+        return query_db('SELECT * FROM climate WHERE time < ?', [kwargs['end_time']])
+    else:
+        return query_db('SELECT * FROM climate')
+
+
 @LoggerApi.route('/climate/data', methods=['GET', 'POST'])
 def data():
     """
@@ -139,19 +161,10 @@ def graph():
     end time: UNIX timestamp
               latest data point to retrieve
     """
-    # Try to get params from form data first, then try url params
+    # Try to get params request
     params = extract_variables(['start_time', 'end_time'], request)
-
     # Fetch data from database
-    if params['start_time'] and params['end_time']:
-        results = query_db('SELECT * FROM climate WHERE ? < time < ?', [params['start_time'],
-                                                                        params['end_time']])
-    elif params['start_time'] and not params['end_time']:
-        results = query_db('SELECT * FROM climate WHERE time > ?', [params['start_time']])
-    elif params['end_time'] and not params['start_time']:
-        results = query_db('SELECT * FROM climate WHERE time < ?', [params['end_time']])
-    else:
-        results = query_db('SELECT * FROM climate')
+    results = query_climate_range(**params)
 
     # Turn it in to lists which can be graphed
     dates = []
