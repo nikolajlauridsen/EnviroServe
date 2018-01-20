@@ -81,6 +81,27 @@ def query_db(query, args=(), one=False, commit=False):
         return (rv[0] if rv else None) if one else rv
 
 
+def extract_variables(expected_variables, _request):
+    """
+    Extract expected variables from a http request
+    Will try both form and url parameters.
+    :param expected_variables: List of expected variable names
+    :param _request: Request to extract variables
+    :return: Dictionary of extracted values and their names,
+    sets None if no value is found, creates a list of both values if
+    two different values is found for the same key name (form value first)
+    """
+    extracted_variables = {}
+    for variable in expected_variables:
+        form_var = _request.form.get(variable)
+        args_var = _request.args.get(variable)
+        if form_var and args_var:
+            extracted_variables[variable] = [form_var, args_var]
+        else:
+            extracted_variables[variable] = form_var if form_var else args_var
+    return extracted_variables
+
+
 @LoggerApi.route('/climate/data', methods=['GET', 'POST'])
 def data():
     """
@@ -119,20 +140,16 @@ def graph():
               latest data point to retrieve
     """
     # Try to get params from form data first, then try url params
-    start_time = request.form.get('start_time')
-    end_time = request.form.get('end_time')
-    if not start_time:
-        start_time = request.args.get('start_time')
-    if not end_time:
-        end_time = request.args.get('end_time')
+    params = extract_variables(['start_time', 'end_time'], request)
 
     # Fetch data from database
-    if start_time and end_time:
-        results = query_db('SELECT * FROM climate WHERE ? < time < ?', [start_time, end_time])
-    elif start_time and not end_time:
-        results = query_db('SELECT * FROM climate WHERE time > ?', [start_time])
-    elif end_time and not start_time:
-        results = query_db('SELECT * FROM climate WHERE time < ?', [end_time])
+    if params['start_time'] and params['end_time']:
+        results = query_db('SELECT * FROM climate WHERE ? < time < ?', [params['start_time'],
+                                                                        params['end_time']])
+    elif params['start_time'] and not params['end_time']:
+        results = query_db('SELECT * FROM climate WHERE time > ?', [params['start_time']])
+    elif params['end_time'] and not params['start_time']:
+        results = query_db('SELECT * FROM climate WHERE time < ?', [params['end_time']])
     else:
         results = query_db('SELECT * FROM climate')
 
