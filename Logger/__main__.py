@@ -137,7 +137,8 @@ def data():
                                                              request.form['time']], commit=True)
         return 'Data saved'
     elif request.method == 'GET':
-        data = query_db('SELECT * FROM climate')
+        params = extract_variables(['start_time', 'end_time'], request)
+        data = query_climate_range(**params)
         return jsonify(results=data)
 
 
