@@ -125,7 +125,9 @@ public class MainActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        Snackbar warningSnack = Snackbar.make(findViewById(R.id.root),
+                                R.string.connectionWarningString, Snackbar.LENGTH_LONG);
+                        warningSnack.show();
                     }
                 });
         queue.add(dataRequest);
