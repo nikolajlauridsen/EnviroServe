@@ -11,3 +11,7 @@ body{
     text-align: center;
     font-weight: bold;
 }
+
+#graphFrame{
+    min-height: 480px;
+}

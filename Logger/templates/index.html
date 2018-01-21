@@ -22,6 +22,7 @@
 </head>
 
 <body>
+    <meta id="loadGifPath" data-name="{{ url_for('static', filename='loading.gif') }}">
     <div class="container">
         <!--  Title row  -->
         <div class="row">
@@ -66,8 +67,8 @@
 
         <!-- Graping section -->
         <h5 id="graph title" class="center-align">Climate graph</h5>
-        <div class="row center-align">
-            <img src="#" id="graph" >
+        <div class="row center-align" id="graphFrame">
+            <img src="{{ url_for('static', filename='loading.gif') }}" id="graph">
         </div>
 
         <!-- Button row -->

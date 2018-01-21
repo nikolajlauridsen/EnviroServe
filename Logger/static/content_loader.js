@@ -1,6 +1,6 @@
 function load_graph(days, hours){
     var duration = days * 24 * 3600 + hours * 3600;
-    // Gets unix time string
+    // Gets unix time string.
     var now = Math.floor(Date.now() / 1000);
     var start_time = now - duration;
 
@@ -12,8 +12,8 @@ function load_graph(days, hours){
 }
 
 function load_custom_graph(){
-    // Simple "wrapper" function which fetches the values
-    // from the modal, for load_graph, it also closes the modal
+    // Simple "wrapper" function which fetches the values.
+    // from the modal, for load_graph, it also closes the modal.
     var hours = document.getElementById("hours").value;
     var days = document.getElementById("days").value;
 
@@ -26,13 +26,13 @@ function format_unix(timestamp){
 
     // Format time string cause it's weird
     var timestring = date.toLocaleTimeString();
-    timestring = timestring.slice(0, timestring.length-3);  // Slice seconds
+    timestring = timestring.slice(0, timestring.length-3);  // Slice seconds.
     timestring = timestring.replace(".", ":");              // Replace . with :
 
     return timestring + " " + date.toLocaleDateString();
 }
 $(document).ready(function () {
-    // Activates modal and loads extra page elements
+    // Activates modal and loads extra page elements.
     $('.modal').modal();
     load_graph(0, 12);
 });
