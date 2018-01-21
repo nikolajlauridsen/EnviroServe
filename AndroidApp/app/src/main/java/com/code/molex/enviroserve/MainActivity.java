@@ -60,17 +60,23 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             Log.i("Graph", "Graphing data...");
                             JSONArray data = (JSONArray) response.get("results");
-                            DataPoint[] dataPoints = new DataPoint[data.length()];
+                            DataPoint[] tempPoints = new DataPoint[data.length()];
+                            DataPoint[] humidPoints = new DataPoint[data.length()];
 
                             for (int i=0; i < data.length(); i++){
                                 JSONObject datapoint = data.getJSONObject(i);
                                 Date dataAge = new Date((long) datapoint.getDouble("time")*1000);
 
-                                dataPoints[i] = new DataPoint(dataAge,
+                                tempPoints[i] = new DataPoint(dataAge,
                                                               datapoint.getDouble("temp"));
+                                humidPoints[i] = new DataPoint(dataAge,
+                                                               datapoint.getDouble("humid"));
                             }
 
-                            LineGraphSeries<DataPoint> tempSeries = new LineGraphSeries<>(dataPoints);
+                            LineGraphSeries<DataPoint> tempSeries = new LineGraphSeries<>(tempPoints);
+                            tempSeries.setColor(Color.RED);
+                            LineGraphSeries<DataPoint> humidSeries = new LineGraphSeries<>(humidPoints);
+                            humidSeries.setColor(Color.CYAN);
                             // Get Add the series to the graph
                             GraphView graph = findViewById(R.id.graph);
 
@@ -82,10 +88,10 @@ public class MainActivity extends AppCompatActivity {
                             // set manual X bounds
                             graph.getViewport().setYAxisBoundsManual(true);
                             graph.getViewport().setMinY(30);
-                            graph.getViewport().setMaxY(45);
+                            graph.getViewport().setMaxY(50);
 
-                            graph.getViewport().setMinX(dataPoints[0].getX());
-                            graph.getViewport().setMaxX(dataPoints[dataPoints.length-1].getX());
+                            graph.getViewport().setMinX(tempPoints[0].getX());
+                            graph.getViewport().setMaxX(tempPoints[tempPoints.length-1].getX());
                             graph.getViewport().setXAxisBoundsManual(true);
                             graph.getGridLabelRenderer().setHumanRounding(false);
 
@@ -93,8 +99,8 @@ public class MainActivity extends AppCompatActivity {
                             graph.getViewport().setScalable(true);
                             graph.getViewport().setScalableY(true);
 
-                            tempSeries.setColor(Color.RED);
                             graph.addSeries(tempSeries);
+                            graph.addSeries(humidSeries);
                         } catch (JSONException e){
                             // TODO: Something clever
                         }
