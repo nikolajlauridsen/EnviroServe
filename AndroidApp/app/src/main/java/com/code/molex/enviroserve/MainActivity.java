@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
                             JSONArray data = (JSONArray) response.get("results");
                             DataPoint[] tempPoints = new DataPoint[data.length()];
                             DataPoint[] humidPoints = new DataPoint[data.length()];
+                            DataPoint[] pressurePoints = new DataPoint[data.length()];
 
                             for (int i=0; i < data.length(); i++){
                                 JSONObject datapoint = data.getJSONObject(i);
@@ -71,12 +72,17 @@ public class MainActivity extends AppCompatActivity {
                                                               datapoint.getDouble("temp"));
                                 humidPoints[i] = new DataPoint(dataAge,
                                                                datapoint.getDouble("humid"));
+                                pressurePoints[i] = new DataPoint(dataAge,
+                                                                  datapoint.getDouble("pressure"));
                             }
 
                             LineGraphSeries<DataPoint> tempSeries = new LineGraphSeries<>(tempPoints);
                             tempSeries.setColor(Color.RED);
                             LineGraphSeries<DataPoint> humidSeries = new LineGraphSeries<>(humidPoints);
                             humidSeries.setColor(Color.CYAN);
+                            LineGraphSeries<DataPoint> pressureSeries = new LineGraphSeries<>(pressurePoints);
+                            pressureSeries.setColor(Color.GREEN);
+
                             // Get Add the series to the graph
                             GraphView graph = findViewById(R.id.graph);
 
@@ -93,7 +99,9 @@ public class MainActivity extends AppCompatActivity {
                             graph.getViewport().setMinX(tempPoints[0].getX());
                             graph.getViewport().setMaxX(tempPoints[tempPoints.length-1].getX());
                             graph.getViewport().setXAxisBoundsManual(true);
-                            graph.getGridLabelRenderer().setHumanRounding(false);
+                            // Human rounding: nice y axis, bad x axis
+                            // No human rounding: nice axis. bad y axis
+                            graph.getGridLabelRenderer().setHumanRounding(true);
 
                             // enable scaling and scrolling
                             graph.getViewport().setScalable(true);
@@ -101,6 +109,12 @@ public class MainActivity extends AppCompatActivity {
 
                             graph.addSeries(tempSeries);
                             graph.addSeries(humidSeries);
+
+                            // Add pressure and sort it's axis
+                            graph.getSecondScale().addSeries(pressureSeries);
+                            graph.getSecondScale().setMinY(950);
+                            graph.getSecondScale().setMaxY(1050);
+                            graph.getGridLabelRenderer().setVerticalLabelsSecondScaleColor(Color.GREEN);
                         } catch (JSONException e){
                             // TODO: Something clever
                         }
