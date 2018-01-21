@@ -95,8 +95,11 @@ public class MainActivity extends AppCompatActivity {
                             graph.getViewport().setYAxisBoundsManual(true);
                             graph.getViewport().setMinY(30);
                             graph.getViewport().setMaxY(50);
-
-                            graph.getViewport().setMinX(tempPoints[0].getX());
+                            Log.i("Graph x bounds",
+                                    "From: " + Double.toString(tempPoints[0].getX()) +
+                                            " To: " + Double.toString(tempPoints[tempPoints.length-1].getX()));
+                            Double firstPoint = tempPoints[tempPoints.length-1].getX() - (24 * 3600 * 1000);
+                            graph.getViewport().setMinX(firstPoint);
                             graph.getViewport().setMaxX(tempPoints[tempPoints.length-1].getX());
                             graph.getViewport().setXAxisBoundsManual(true);
                             // Human rounding: nice y axis, bad x axis
