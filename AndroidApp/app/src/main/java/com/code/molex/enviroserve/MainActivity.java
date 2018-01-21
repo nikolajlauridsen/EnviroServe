@@ -15,6 +15,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -63,8 +64,9 @@ public class MainActivity extends AppCompatActivity {
 
                             for (int i=0; i < data.length(); i++){
                                 JSONObject datapoint = data.getJSONObject(i);
+                                Date dataAge = new Date((long) datapoint.getDouble("time")*1000);
 
-                                dataPoints[i] = new DataPoint(datapoint.getDouble("time"),
+                                dataPoints[i] = new DataPoint(dataAge,
                                                               datapoint.getDouble("temp"));
                             }
 
@@ -72,15 +74,20 @@ public class MainActivity extends AppCompatActivity {
                             // Get Add the series to the graph
                             GraphView graph = findViewById(R.id.graph);
 
+                            // set date label formatter
+                            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(MainActivity.this));
+                            graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
+
                             // Enable scroll and zoom
                             // set manual X bounds
                             graph.getViewport().setYAxisBoundsManual(true);
-                            graph.getViewport().setMinY(-150);
-                            graph.getViewport().setMaxY(150);
+                            graph.getViewport().setMinY(30);
+                            graph.getViewport().setMaxY(45);
 
+                            graph.getViewport().setMinX(dataPoints[0].getX());
+                            graph.getViewport().setMaxX(dataPoints[dataPoints.length-1].getX());
                             graph.getViewport().setXAxisBoundsManual(true);
-                            graph.getViewport().setMinX(4);
-                            graph.getViewport().setMaxX(80);
+                            graph.getGridLabelRenderer().setHumanRounding(false);
 
                             // enable scaling and scrolling
                             graph.getViewport().setScalable(true);
