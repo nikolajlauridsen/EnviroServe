@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                             graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
 
                             // Enable scroll and zoom
-                            // set manual X bounds
+                            // set manual bounds
                             graph.getViewport().setYAxisBoundsManual(true);
                             graph.getViewport().setMinY(30);
                             graph.getViewport().setMaxY(50);
