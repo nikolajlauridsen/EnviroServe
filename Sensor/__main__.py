@@ -58,7 +58,6 @@ def init_sense():
     """
     sense = SenseHat()
     sense.clear()
-    sense.set_rotation(180)  # I'm using my sense hat upside down
     sense.low_light = True   # This thing is very, very bright
     return sense
 
