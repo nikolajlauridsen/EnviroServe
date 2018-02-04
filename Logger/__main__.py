@@ -201,7 +201,7 @@ def graph():
               latest data point to retrieve
     """
     # Try to get params request
-    params = extract_variables(['start_time', 'end_time'], request)
+    params = extract_variables(['start_time', 'end_time', 'sensor_id'], request)
     # Fetch data from database
     results = query_climate_range(**params)
 
