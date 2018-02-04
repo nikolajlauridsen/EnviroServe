@@ -8,13 +8,15 @@
     <!-- Materialize
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <!-- Jquery -->
     <script
       src="https://code.jquery.com/jquery-3.2.1.min.js"
       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
       crossorigin="anonymous"></script>
-    <!-- Compiled and minified JavaScript -->
+    <!-- Compiled and minified JavaScript for materialize -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-
+    <!-- Graphing library -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <!--   Served  -->
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
     <script src="{{ url_for('static', filename='content_loader.js') }}"></script>
@@ -68,7 +70,7 @@
         <!-- Graping section -->
         <h5 id="graph title" class="center-align">Climate graph</h5>
         <div class="row center-align" id="graphFrame">
-            <img src="{{ url_for('static', filename='loading.gif') }}" id="graph">
+            <div id="climateChart"></div>
         </div>
 
         <!-- Button row -->
