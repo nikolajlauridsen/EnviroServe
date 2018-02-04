@@ -1,14 +1,9 @@
-from flask import Flask, request, g, make_response, jsonify, render_template, abort
-from io import BytesIO
+from flask import Flask, request, g, jsonify, render_template, abort
 import sqlite3
 import datetime
 import time
 import uuid
 
-
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
-from matplotlib.dates import DateFormatter
 
 DATABASE = 'sensordata.db'
 COLORS = {  # For plotting with matplot
@@ -190,63 +185,6 @@ def now():
     """
     result = query_db('SELECT * FROM climate ORDER BY time DESC LIMIT 1;', one=True)
     return jsonify(result)
-
-
-@LoggerApi.route('/climate/graph')
-def graph():
-    """
-    Endpoint for generating a graph from the database
-    Takes to optional form arguments
-    start_time: UNIX timestamp
-                earliest data point to retrieve
-    end time: UNIX timestamp
-              latest data point to retrieve
-    """
-    # Try to get params request
-    params = extract_variables(['start_time', 'end_time', 'sensor_id'], request)
-    # Fetch data from database
-    results = query_climate_range(**params)
-
-    # Turn it in to lists which can be graphed
-    dates = []
-    humids = []
-    temps = []
-    pressures = []
-    for result in results:
-        dates.append(datetime.datetime.fromtimestamp(result['time']))
-        humids.append(result['humid'])
-        temps.append(result['temp'])
-        pressures.append(result['pressure'])
-
-    # Graph it
-    fig = Figure()
-    # First y axis (temp and humid)
-    axis = fig.add_subplot(1, 1, 1)
-    # Plot humidity and temp on the same scale
-    axis.plot_date(dates, humids, '-', color=COLORS['blue'])
-    axis.plot_date(dates, temps, '-', color=COLORS['red'])
-    axis.xaxis.set_major_formatter(DateFormatter('%d/%m/%y %H:%M'))
-    axis.set_ylabel('Humidity in % & Temps in C')
-    axis.set_xlabel('Time')
-    # Second y axis (pressure)
-    axis_pressure = axis.twinx()
-    # Plot pressure
-    axis_pressure.plot_date(dates, pressures, '-', color=COLORS['green'])
-    axis_pressure.xaxis.set_major_formatter(DateFormatter('%d/%m/%y %H:%M'))
-    axis_pressure.set_ylabel('Pressure in mbar')
-    # Configure the figure
-    fig.autofmt_xdate()
-    fig.legend(['Humidity', 'Temperature', 'Pressure'], loc='lower right')
-    fig.set_tight_layout(True)
-    canvas = FigureCanvas(fig)
-    # Save output
-    png_output = BytesIO()
-    canvas.print_png(png_output)
-
-    # Create the response and send it
-    response = make_response(png_output.getvalue())
-    response.headers['Content-Type'] = 'image/png'
-    return response
 
 
 @LoggerApi.route('/index')
