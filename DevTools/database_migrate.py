@@ -1,3 +1,8 @@
+"""
+I changed the database schema but didn't want to loose my data
+so this scripts creates a new database with a sensor the user types in
+then copies all the data to the new database and attributes it to that sensor.
+"""
 import sqlite3 as lite
 import os
 
