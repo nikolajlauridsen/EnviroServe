@@ -2,7 +2,7 @@ from sense_hat import SenseHat, DIRECTION_UP, DIRECTION_DOWN, DIRECTION_RIGHT, A
 import time
 import requests
 from requests import ConnectionError, Timeout
-from . import RESOLUTION, HUMID_PAUSE, HUMID_WARN, LOGGER_IP, LOGGER_PORT
+from . import RESOLUTION, HUMID_PAUSE, HUMID_WARN, LOGGER_IP, LOGGER_PORT, SENSOR_ID
 
 # ------------ LED list for warning sign ------------
 # Colors
@@ -34,6 +34,7 @@ def get_data(sense):
 
 def send_data(_data):
     try:
+        _data['sensor_id'] = SENSOR_ID
         res = requests.post('http://{}:{}/climate/data'.format(LOGGER_IP,
                                                                LOGGER_PORT),
                             data=_data, timeout=20)
