@@ -128,7 +128,7 @@ def query_climate_range(**kwargs):
         return query_db('SELECT * FROM climate WHERE ( time > ? AND time < ? AND sensor_id = ?)',
                         [kwargs['start_time'], kwargs['end_time'], kwargs['sensor_id']])
     else:
-        return query_db('SELECT * FROM climate WHERE ? < time < ?',
+        return query_db('SELECT * FROM climate WHERE (time > ? AND time < ?)',
                         [kwargs['start_time'], kwargs['end_time']])
 
 
