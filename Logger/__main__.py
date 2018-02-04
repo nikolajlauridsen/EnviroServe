@@ -116,14 +116,16 @@ def query_climate_range(**kwargs):
         end_time: end time as a unix time stamp
     :return:
     """
+    # print("Start time: ", kwargs['start_time'], " End time: ", kwargs['end_time'])
     if not kwargs['start_time']:
         kwargs['start_time'] = 0
     if not kwargs['end_time']:
         # Searching for data 1 day into the 'future' as a max limit seems fair.
         kwargs['end_time'] = time.time() + 24*3600
-
+    # TODO: Look at this
+    # print("Start time: ", kwargs['start_time'], " End time: ", kwargs['end_time'])
     if kwargs['sensor_id']:
-        return query_db('SELECT * FROM climate WHERE ? < time < ? AND sensor_id = ?',
+        return query_db('SELECT * FROM climate WHERE ( time > ? AND time < ? AND sensor_id = ?)',
                         [kwargs['start_time'], kwargs['end_time'], kwargs['sensor_id']])
     else:
         return query_db('SELECT * FROM climate WHERE ? < time < ?',
@@ -201,7 +203,7 @@ def graph():
               latest data point to retrieve
     """
     # Try to get params request
-    params = extract_variables(['start_time', 'end_time', 'sensor_id'], request)
+    params = extract_variables(['start_time', 'end_time', 'start_time'], request)
     # Fetch data from database
     results = query_climate_range(**params)
 
