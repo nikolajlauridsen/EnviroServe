@@ -34,7 +34,7 @@ function format_unix(timestamp){
 
 function graph_data() {
     // Get data from API
-    var url = "http://127.0.0.1:2020/climate/data";
+    var url = "http:/192.168.1.250:2020/climate/data";
     // Get data from last week
     var start_time = Math.floor(Date.now()/1000) - 3600*24*7;
     url += "?start_time=" + start_time;
