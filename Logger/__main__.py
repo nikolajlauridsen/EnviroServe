@@ -35,6 +35,7 @@ def get_db():
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
+        db.cursor().execute("PRAGMA foreign_keys = ON;")
     db.row_factory = make_dicts
     return db
 
@@ -129,6 +130,15 @@ def query_climate_range(**kwargs):
                         [kwargs['start_time'], kwargs['end_time']])
 
 
+@LoggerApi.route('/sensors', methods=['GET'])
+def sensors():
+    """
+    Endpoint for getting all current sensors and their name
+    """
+    sensor_data = query_db('SELECT * FROM sensors')
+    return jsonify(results=sensor_data)
+
+
 @LoggerApi.route('/climate/data', methods=['GET', 'POST'])
 def data():
     """
@@ -143,16 +153,21 @@ def data():
                 or not (params["time"] and params["sensor_id"]):
             # There's either no information or no sensor_id and time
             abort(400)
+        # Make sure sensor id is a valid integer
+        try:
+            int(params["sensor_id"])
+        except ValueError:
+            abort(400)
 
         try:
             # Try inserting values
             query_db('INSERT INTO climate VALUES (?, ?, ?, ?, ?)',
                      [params['temp'], params['humid'], params['pressure'],
                       params['time'], params["sensor_id"]], commit=True)
-        except sqlite3.OperationalError:
+        except sqlite3.IntegrityError:
             # Sensor not in database yet, add it with a temporary name
             query_db('INSERT INTO sensors VALUES (?, ?)',
-                     [params["sensor_id"], uuid.uuid4()], commit=True)
+                     [params["sensor_id"], str(uuid.uuid4())], commit=True)
             # Then insert values...
             query_db('INSERT INTO climate VALUES (?, ?, ?, ?, ?)',
                      [params['temp'], params['humid'], params['pressure'],
