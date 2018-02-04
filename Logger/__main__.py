@@ -1,7 +1,9 @@
-from flask import Flask, request, g, make_response, jsonify, render_template
+from flask import Flask, request, g, make_response, jsonify, render_template, abort
 from io import BytesIO
 import sqlite3
 import datetime
+import time
+import uuid
 
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -113,15 +115,18 @@ def query_climate_range(**kwargs):
         end_time: end time as a unix time stamp
     :return:
     """
-    if kwargs['start_time'] and kwargs['end_time']:
-        return query_db('SELECT * FROM climate WHERE ? < time < ?', [kwargs['start_time'],
-                                                                     kwargs['end_time']])
-    elif kwargs['start_time'] and not kwargs['end_time']:
-        return query_db('SELECT * FROM climate WHERE time > ?', [kwargs['start_time']])
-    elif kwargs['end_time'] and not kwargs['start_time']:
-        return query_db('SELECT * FROM climate WHERE time < ?', [kwargs['end_time']])
+    if not kwargs['start_time']:
+        kwargs['start_time'] = 0
+    if not kwargs['end_time']:
+        # Searching for data 1 day into the 'future' as a max limit seems fair.
+        kwargs['end_time'] = time.time() + 24*3600
+
+    if kwargs['sensor_id']:
+        return query_db('SELECT * FROM climate WHERE ? < time < ? AND sensor_id = ?',
+                        [kwargs['start_time'], kwargs['end_time'], kwargs['sensor_id']])
     else:
-        return query_db('SELECT * FROM climate')
+        return query_db('SELECT * FROM climate WHERE ? < time < ?',
+                        [kwargs['start_time'], kwargs['end_time']])
 
 
 @LoggerApi.route('/climate/data', methods=['GET', 'POST'])
@@ -131,13 +136,31 @@ def data():
     from the climate table
     """
     if request.method == 'POST':
-        query_db('INSERT INTO climate VALUES (?, ?, ?, ?)', [request.form['temp'],
-                                                             request.form['humid'],
-                                                             request.form['pressure'],
-                                                             request.form['time']], commit=True)
+        params = extract_variables(['temp', 'humid', 'pressure',
+                                    'time', 'sensor_id'], request)
+        # Test to see if the minimum required variables were parsed
+        if not (params['temp'] or params['humid'] or params['pressure'])\
+                or not (params["time"] and params["sensor_id"]):
+            # There's either no information or no sensor_id and time
+            abort(400)
+
+        try:
+            # Try inserting values
+            query_db('INSERT INTO climate VALUES (?, ?, ?, ?, ?)',
+                     [params['temp'], params['humid'], params['pressure'],
+                      params['time'], params["sensor_id"]], commit=True)
+        except sqlite3.OperationalError:
+            # Sensor not in database yet, add it with a temporary name
+            query_db('INSERT INTO sensors VALUES (?, ?)',
+                     [params["sensor_id"], uuid.uuid4()], commit=True)
+            # Then insert values...
+            query_db('INSERT INTO climate VALUES (?, ?, ?, ?, ?)',
+                     [params['temp'], params['humid'], params['pressure'],
+                      params['time'], params["sensor_id"]], commit=True)
+            return 'Sensor added and data saved'
         return 'Data saved'
     elif request.method == 'GET':
-        params = extract_variables(['start_time', 'end_time'], request)
+        params = extract_variables(['start_time', 'end_time', 'sensor_id'], request)
         data = query_climate_range(**params)
         return jsonify(results=data)
 

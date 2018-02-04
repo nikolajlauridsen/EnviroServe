@@ -1,5 +1,6 @@
+PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS sensors(
-  id int NOT NULL,
+  id int NOT NULL UNIQUE,
   name TEXT NOT NULL
 );
 
