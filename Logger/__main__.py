@@ -148,13 +148,19 @@ def data():
     from the climate table
     """
     if request.method == 'POST':
-        params = extract_variables(['temp', 'humid', 'pressure',
-                                    'time', 'sensor_id'], request)
+        params = extract_variables(['temp', 'humid', 'pressure', 'light',
+                                    'smoke', 'time', 'sensor_id'], request)
         # Test to see if the minimum required variables were parsed
+        # TODO: Make this smarter
         if not (params['temp'] or params['humid'] or params['pressure'])\
-                or not (params["time"] and params["sensor_id"]):
+                or not params["sensor_id"]:
             # There's either no information or no sensor_id and time
             abort(400)
+        # If there's no timestamp we'll assign one
+        # This makes it possible to use micro controller based sensors
+        # without RTC
+        if not params['time']:
+            params['time'] = time.time()
         # Make sure sensor id is a valid integer
         try:
             int(params["sensor_id"])
@@ -163,16 +169,18 @@ def data():
 
         try:
             # Try inserting values
-            query_db('INSERT INTO climate VALUES (?, ?, ?, ?, ?)',
+            query_db('INSERT INTO climate VALUES (?, ?, ?, ?, ?, ?, ?)',
                      [params['temp'], params['humid'], params['pressure'],
+                      params['light'], params['smoke'],
                       params['time'], params["sensor_id"]], commit=True)
         except sqlite3.IntegrityError:
             # Sensor not in database yet, add it with a temporary name
             query_db('INSERT INTO sensors VALUES (?, ?)',
                      [params["sensor_id"], str(uuid.uuid4())], commit=True)
             # Then insert values...
-            query_db('INSERT INTO climate VALUES (?, ?, ?, ?, ?)',
+            query_db('INSERT INTO climate VALUES (?, ?, ?, ?, ?, ?, ?)',
                      [params['temp'], params['humid'], params['pressure'],
+                      params['light'], params['smoke'],
                       params['time'], params["sensor_id"]], commit=True)
             return 'Sensor added and data saved'
         return 'Data saved'
