@@ -51,7 +51,7 @@ function graph_data() {
         }
         //It's finally time to graph the data
         // Load the Visualization API and the corechart package.
-        google.charts.load('current', {'packages':['line']});
+        google.charts.load('current', {'packages':['corechart']});
 
         // Set a callback to run when the Google Visualization API is loaded.
         google.charts.setOnLoadCallback(drawChart);
@@ -67,17 +67,22 @@ function graph_data() {
                            'width': 900,
                            'height': 600,
                            'series': {
-                                0: {axis: 'Temps'},
-                                1: {axis: 'Temps'},
-                                2: {axis: 'Pressure'}
+                                0: {targetAxisIndex: 0},
+                                1: {targetAxisIndex: 0},
+                                2: {targetAxisIndex: 1}
                             },
-                            axes: {
-                                y: {Temps: {label: 'Temp/Humidity'},
-                                    Pressure: {label: 'Pressure'}}
+                            vAxes: {
+                                0: {title: "Temp/Humidity"},
+                                1: {title: 'Pressure'}
+                            },
+                            explorer: {
+                                keepInBounds: true,
+                                axis: 'horizontal',
+                                maxZoomIn: 4.0
                             }};
             // Instansiate and draw chart
-            var chart = new google.charts.Line(document.getElementById('climateChart'));
-            chart.draw(data, google.charts.Line.convertOptions(options));
+            var chart = new google.visualization.LineChart(document.getElementById('climateChart'));
+            chart.draw(data, options);
         }
     });
 }
