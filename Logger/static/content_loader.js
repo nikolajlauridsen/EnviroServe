@@ -38,6 +38,7 @@ function graph_data() {
     // Get data from last week
     var start_time = Math.floor(Date.now()/1000) - 3600*24*7;
     url += "?start_time=" + start_time;
+    url += "&sensor_id=1";
     $.getJSON(url, '', function (json) {
         // Retrieve the data from the json
         var data_result = json.results;
